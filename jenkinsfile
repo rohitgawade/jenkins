@@ -1,0 +1,25 @@
+node('master')
+{
+    stage('continus download')
+    {
+        git 'https://github.com/selenium-saikrishna/maven.git'
+    }
+    stage('continuous build')
+    {
+        sh 'mvn package'
+    }
+    stage('continus deployment')
+    {
+        sh 'scp /home/ubuntu/.jenkins/workspace/pipeline/webapp/target/webapp.war  ubuntu@172.31.7.44:/var/lib/tomcat9/webapps/qaenv.war'
+    }
+    stage('continus testing')
+    {
+        git 'https://github.com/selenium-saikrishna/FunctionalTesting.git'
+        sh 'java -jar /home/ubuntu/.jenkins/workspace/pipeline/testing.jar'
+    }
+    stage('continuous delivery')
+    {
+         sh 'scp  /home/ubuntu/.jenkins/workspace/pipeline/webapp/target/webapp.war ubuntu@172.31.12.77:/var/lib/tomcat9/webapps/prodenv.war'
+    }
+    
+}    
